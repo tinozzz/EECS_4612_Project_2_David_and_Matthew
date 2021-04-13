@@ -1,0 +1,64 @@
+
+    logic [7:0] vectors[34:0], currentvec; // vectors has 5 elements each consisting of 3 bits
+    logic [6:0] vectornum, errors;
+
+    // read test vector file and initialize test
+    initial begin
+       $readmemb("lfsr.tv", vectors); // put your test vectors into the vectors variable
+       vectornum = 0; errors = 0;
+	seed = vectors[0][7:4];	
+	clk = 0;	
+	load = 0;
+	rst = 1;
+	#50 rst = 0;
+	
+	
+    end
+    // generate a clock to sequence tests
+    always begin
+        #50 clk = !clk;
+    end
+    
+	initial begin
+	#100 
+	load = 1;
+	#100 load = 0;
+	end
+
+    // apply test, each time clk goes high...
+    always @(posedge clk) begin
+       currentvec = vectors[vectornum]; //...load in a new test vector
+       seed = currentvec[7:4];               //...apply the nand's a input
+       if (currentvec[0] === 1'bx) begin // if the output is unknown (x), you have finished the test
+         $display("Completed %d tests with %d errors.", 
+                  vectornum, errors);
+         $stop;
+       end
+    end
+    
+    // check if test was sucessful and apply next one
+    always @(negedge clk) begin
+       if ((out !== currentvec[3:0])) begin
+          $display("Error: input of seed in hex was %h ", seed);
+          $display("       output = %h (%h expected)", 
+                   out, currentvec[3:0]);
+          errors = errors + 1;
+       end
+       vectornum = vectornum + 1;
+    end
+
+
+// Verilog stimulus file.
+// Please do not create a module in this file.
+
+
+// Default verilog stimulus. 
+
+//initial
+//begin 
+
+ //  seed[3:0] = 4'b0000;
+
+   //select = 1'b0;
+//end 
+
