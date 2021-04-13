@@ -1,8 +1,4 @@
 //---------------------------------------------------------
-// nand2.sv
-// Nathaniel Pinckney 08/06/07
-//
-// Model and testbench of NAND2 gate
 //--------------------------------------------------------
 
 module testbench();
@@ -18,9 +14,6 @@ module testbench();
 	`include "testfixture.verilog"
     
 endmodule
-
-
-
 
 module lfsr(q, clk, rst, seed, load,out);
 output q;
